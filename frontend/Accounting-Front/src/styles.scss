@@ -1,0 +1,68 @@
+@import 'primeflex/primeflex.css';
+
+// Global styles
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-family);
+    background-color: var(--surface-ground);
+}
+
+// RTL Support for Arabic
+html[dir="rtl"] {
+    .p-menubar {
+        .p-menubar-start {
+            margin-left: auto;
+            margin-right: 0;
+        }
+    }
+}
+
+// Custom styles for better Arabic support
+.app-container {
+    min-height: 100vh;
+    direction: rtl;
+    text-align: right;
+}
+
+.main-content {
+    padding: 1rem;
+}
+
+// Override PrimeNG styles for better RTL support
+.p-menubar {
+    direction: rtl;
+
+    .p-menubar-start {
+        margin-left: auto;
+        margin-right: 0;
+    }
+
+    .p-menuitem-text {
+        text-align: right;
+    }
+}
+
+.p-card {
+    direction: rtl;
+    text-align: right;
+}
+
+.p-button {
+    direction: rtl;
+}
+
+.p-table {
+    direction: rtl;
+
+    .p-datatable-thead>tr>th {
+        text-align: right;
+    }
+
+    .p-datatable-tbody>tr>td {
+        text-align: right;
+    }
+}

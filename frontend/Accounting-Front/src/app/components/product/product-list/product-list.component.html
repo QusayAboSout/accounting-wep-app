@@ -1,0 +1,231 @@
+<div class="product-list-container p-4">
+  <p-card>
+    <ng-template pTemplate="header">
+      <p-toolbar>
+        <ng-template pTemplate="start">
+          <h2 class="m-0">المنتجات</h2>
+        </ng-template>
+        <ng-template pTemplate="end">
+          <p-button 
+            label="إضافة منتج جديد" 
+            icon="pi pi-plus" 
+            (click)="showDialog()"
+            severity="success">
+          </p-button>
+        </ng-template>
+      </p-toolbar>
+    </ng-template>
+
+<p-dialog header="إضافة منتج" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
+        <span class="p-text-secondary block mb-8">إدخل معلومات المنتج</span>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="p-fluid grid">
+
+    <div class="field col-12">
+      <label>اسم المنتج</label>
+      <input pInputText formControlName="name" />
+    </div>
+
+    <div class="field col-6">
+      <label>سعر البيع</label>
+      <input pInputText type="number" formControlName="cost" />
+    </div>
+
+    <div class="field col-6">
+      <label>سعر الشراء</label>
+      <input pInputText type="number" formControlName="costPrice" />
+    </div>
+
+    <div class="field col-12">
+      <label>الباركود</label>
+      <input pInputText formControlName="barcode" />
+    </div>
+
+    <div class="field col-12">
+      <label>الفئة</label>
+      <p-select
+        formControlName="categoryID"
+        [options]="categories()"
+        optionLabel="name"
+        optionValue="id"
+        placeholder="اختر الفئة"
+        (onShow)="loadCategories()"
+        [loading]="loadingCategory">
+      </p-select>
+    </div>
+
+    <div class="field col-12">
+      <label>اللون</label>
+      <p-select
+        formControlName="productColorID"
+        [options]="productColors()"
+        optionLabel="name"
+        optionValue="id"
+        placeholder="اختر اللون"
+        (onShow)="loadColors()"
+        [loading]="loadingColor">
+      </p-select>
+    </div>
+
+    <div class="field col-12">
+      <label>الحجم</label>
+      <p-select
+        formControlName="productSizeID"
+        [options]="productSizes()"
+        optionLabel="name"
+        optionValue="id"
+        placeholder="اختر الحجم"
+        (onShow)="loadSizes()"
+        [loading]="loadingSize">
+      </p-select>
+    </div>
+
+    <div class="field col-12 text-right">
+      <button type="submit" pButton label="حفظ" icon="pi pi-save" class="p-button-success"></button>
+    </div>
+    
+  </div>
+</form>
+    </p-dialog>
+
+    <div class="card-content">
+      @if (loading()) {
+        <div class="loading-container text-center p-6">
+          <p-progressSpinner></p-progressSpinner>
+          <p class="mt-3">جاري تحميل المنتجات...</p>
+        </div>
+      }
+
+      @if (error()) {
+        <p-message 
+          severity="error" 
+          [text]="error()!"
+          class="mb-3">
+        </p-message>
+        <div class="text-center">
+          <p-button 
+            label="إعادة المحاولة" 
+            icon="pi pi-refresh" 
+            (click)="loadData()"
+            severity="secondary">
+          </p-button>
+        </div>
+      }
+
+      @if (!loading() && !error() && products().length === 0) {
+        <div class="empty-state text-center p-6">
+          <i class="pi pi-box text-6xl text-400 mb-3"></i>
+          <h3 class="text-xl mb-3">لا توجد منتجات</h3>
+          <p class="text-600 mb-4">لم يتم العثور على أي منتجات. ابدأ بإضافة منتج جديد.</p>
+          <p-button 
+            label="إضافة أول منتج" 
+            icon="pi pi-plus" 
+            [routerLink]="['/products/add']"
+            severity="success">
+          </p-button>
+        </div>
+      }
+
+      @if (!loading() && !error() && products().length > 0) {
+        <p-table 
+          [value]="products()" 
+          [paginator]="true" 
+          [rows]="10"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="عرض {first} إلى {last} من {totalRecords} منتج"
+          [rowsPerPageOptions]="[10, 25, 50]"
+          styleClass="p-datatable-striped"
+          [scrollable]="true"
+          scrollHeight="600px">
+          
+          <ng-template pTemplate="header">
+            <tr>
+              <th>الرقم</th>
+              <th>اسم المنتج</th>
+              <th>الباركود</th>
+              <th>التكلفة</th>
+              <th>سعر البيع</th>
+              <th>الفئة</th>
+              <th>اللون</th>
+              <th>الحجم</th>
+              <th>الإجراءات</th>
+            </tr>
+          </ng-template>
+          
+          <ng-template pTemplate="body" let-product>
+            <tr>
+              <td>{{ product.id }}</td>
+              <td>
+                <div class="flex align-items-center gap-2">
+                  <i class="pi pi-box text-primary"></i>
+                  <span class="font-semibold">{{ product.name }}</span>
+                </div>
+              </td>
+              <td>
+                <p-tag [value]="product.barcode" severity="info"></p-tag>
+              </td>
+              <td>
+                <span class="font-semibold text-green-600">{{ product.costPrice | currency:'USD':'symbol':'1.2-2' }}</span>
+              </td>
+              <td>
+                <span class="font-semibold text-blue-600">{{ product.cost | currency:'USD':'symbol':'1.2-2' }}</span>
+              </td>
+              <td>
+                <p-tag [value]="getCategoryName(product.categoryID)" severity="secondary"></p-tag>
+              </td>
+              <td>
+                <div class="flex align-items-center gap-2">
+                  <div class="color-preview w-1rem h-1rem border-circle border-1 border-300" 
+                       [style.background-color]="getColorName(product.colorID).toLowerCase()"></div>
+                  <span>{{ getColorName(product.colorID) }}</span>
+                </div>
+              </td>
+              <td>
+                <p-tag [value]="getSizeName(product.sizeID)" severity="warning"></p-tag>
+              </td>
+              <td>
+                <div class="flex gap-2">
+                  <p-button 
+                    icon="pi pi-eye" 
+                    [routerLink]="['/products/view', product.id]"
+                    severity="help"
+                    size="small"
+                    [text]="true"
+                    pTooltip="عرض">
+                  </p-button>
+                  <p-button 
+                    icon="pi pi-pencil" 
+                    [routerLink]="['/products/edit', product.id]"
+                    severity="info"
+                    size="small"
+                    [text]="true"
+                    pTooltip="تعديل">
+                  </p-button>
+                  <p-button 
+                    icon="pi pi-trash" 
+                    (click)="deleteProduct(product)"
+                    severity="danger"
+                    size="small"
+                    [text]="true"
+                    pTooltip="حذف">
+                  </p-button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="9" class="text-center p-4">
+                لا توجد منتجات للعرض
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+    </div>
+  </p-card>
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

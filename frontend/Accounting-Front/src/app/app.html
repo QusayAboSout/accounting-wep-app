@@ -1,0 +1,11 @@
+<div class="app-container">
+  <p-menubar [model]="menuItems">
+    <ng-template pTemplate="start">
+      <h2 class="mr-3">نظام المحاسبة</h2>
+    </ng-template>
+  </p-menubar>
+
+  <div class="main-content">
+    <router-outlet />
+  </div>
+</div>

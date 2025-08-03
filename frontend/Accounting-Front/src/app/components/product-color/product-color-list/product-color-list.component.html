@@ -1,0 +1,122 @@
+<div class="product-color-list-container p-4">
+  <p-card>
+    <ng-template pTemplate="header">
+      <p-toolbar>
+        <ng-template pTemplate="start">
+          <h2 class="m-0">ألوان المنتجات</h2>
+        </ng-template>
+        <ng-template pTemplate="end">
+          <p-button 
+            label="إضافة لون جديد" 
+            icon="pi pi-plus" 
+            [routerLink]="['/product-colors/add']"
+            severity="success">
+          </p-button>
+        </ng-template>
+      </p-toolbar>
+    </ng-template>
+
+    <div class="card-content">
+      @if (loading()) {
+        <div class="loading-container text-center p-6">
+          <p-progressSpinner></p-progressSpinner>
+          <p class="mt-3">جاري تحميل ألوان المنتجات...</p>
+        </div>
+      }
+
+      @if (error()) {
+        <p-message 
+          severity="error" 
+          [text]="error()!"
+          class="mb-3">
+        </p-message>
+        <div class="text-center">
+          <p-button 
+            label="إعادة المحاولة" 
+            icon="pi pi-refresh" 
+            (click)="loadProductColors()"
+            severity="secondary">
+          </p-button>
+        </div>
+      }
+
+      @if (!loading() && !error() && productColors().length === 0) {
+        <div class="empty-state text-center p-6">
+          <i class="pi pi-palette text-6xl text-400 mb-3"></i>
+          <h3 class="text-xl mb-3">لا توجد ألوان</h3>
+          <p class="text-600 mb-4">لم يتم العثور على أي ألوان للمنتجات. ابدأ بإضافة لون جديد.</p>
+          <p-button 
+            label="إضافة أول لون" 
+            icon="pi pi-plus" 
+            [routerLink]="['/product-colors/add']"
+            severity="success">
+          </p-button>
+        </div>
+      }
+
+      @if (!loading() && !error() && productColors().length > 0) {
+        <p-table 
+          [value]="productColors()" 
+          [paginator]="true" 
+          [rows]="10"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="عرض {first} إلى {last} من {totalRecords} لون"
+          [rowsPerPageOptions]="[10, 25, 50]"
+          styleClass="p-datatable-striped">
+          
+          <ng-template pTemplate="header">
+            <tr>
+              <th>الرقم</th>
+              <th>اسم اللون</th>
+              <th>الإجراءات</th>
+            </tr>
+          </ng-template>
+          
+          <ng-template pTemplate="body" let-productColor>
+            <tr>
+              <td>{{ productColor.id }}</td>
+              <td>
+                <div class="flex align-items-center gap-2">
+                  <div class="color-preview w-2rem h-2rem border-circle border-1 border-300" 
+                       [style.background-color]="productColor.name.toLowerCase()"></div>
+                  {{ productColor.name }}
+                </div>
+              </td>
+              <td>
+                <div class="flex gap-2">
+                  <p-button 
+                    icon="pi pi-pencil" 
+                    [routerLink]="['/product-colors/edit', productColor.id]"
+                    severity="info"
+                    size="small"
+                    [text]="true"
+                    pTooltip="تعديل">
+                  </p-button>
+                  <p-button 
+                    icon="pi pi-trash" 
+                    (click)="deleteProductColor(productColor)"
+                    severity="danger"
+                    size="small"
+                    [text]="true"
+                    pTooltip="حذف">
+                  </p-button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="3" class="text-center p-4">
+                لا توجد ألوان للعرض
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+    </div>
+  </p-card>
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

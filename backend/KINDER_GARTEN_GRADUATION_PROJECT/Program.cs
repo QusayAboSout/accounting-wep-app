@@ -23,14 +23,26 @@ builder.Services.TanvirArjelConfiguration(builder.Configuration);
 builder.Services.AddSwaggerGen();
 builder.Services.ConfigureMapper();
 builder.Services.ConfigureServices(builder.Configuration);
-builder.Services.AddDbContext<DataContext>(Options => {
+builder.Services.AddDbContext<DataContext>(Options =>
+{
     Options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
 });
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
+app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
 {

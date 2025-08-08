@@ -16,7 +16,7 @@ namespace WebApi.Mapper
             {
 
                 cfg.CreateMap<Product, ProductDto>().ReverseMap();
-                cfg.CreateMap<Category, CategoryDto>().ReverseMap();
+                cfg.CreateMap<ProductCategory, ProductCategoryDto>().ReverseMap();
                 cfg.CreateMap<ProductColor, ProductColorDto>().ReverseMap();
                 cfg.CreateMap<ProductSize, ProductSizeDto>().ReverseMap();
 

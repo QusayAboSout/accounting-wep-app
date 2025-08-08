@@ -1,5 +1,6 @@
 ﻿
 using Domain.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,7 @@ namespace Domain.IServices
     [ScopedService]
     public interface IProductColorServices : IGeneralService<ProductColor>
     {
+        Task<ActionResult> DeleteColor(long id);
+
     }
 }

@@ -7,7 +7,7 @@ using WebApi.DTOs.Base;
 
 namespace Domain.DTOs
 {
-    public class CategoryDto : BaseDto
+    public class ProductCategoryDto : BaseDto
     {
         public string Name { get; set; }
     }

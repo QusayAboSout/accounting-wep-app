@@ -10,9 +10,9 @@ namespace Domain.DTOs
         public long CostPrice { get; set; }
         public string Barcode { get; set; }
 
-        public long CategoryID { get; set; }
-        public long ColorID { get; set; }
-        public long SizeID { get; set; }
+        public long ProductCategoryID { get; set; }
+        public long ProductSizeID { get; set; }
+        public long ProductColorID { get; set; }
 
     }
 }

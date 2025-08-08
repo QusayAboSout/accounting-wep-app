@@ -16,7 +16,7 @@ namespace DataAccess.Data
         public DbSet<Product> Products { get; set; } = null!;
         public DbSet<ProductColor> ProductColors { get; set; } = null!;
         public DbSet<ProductSize> ProductSizes { get; set; } = null!;
-        public DbSet<Category> Categories { get; set; } = null!;
+        public DbSet<ProductCategory> ProductCategories { get; set; } = null!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace DataAccess.Data
             new ProductConfiguration(modelBuilder.Entity<Product>());
             new ProductColorConfiguration(modelBuilder.Entity<ProductColor>());
             new ProductSizeConfiguration(modelBuilder.Entity<ProductSize>());
-            new CategoryConfiguration(modelBuilder.Entity<Category>());
+            new ProductCategoryConfiguration(modelBuilder.Entity<ProductCategory>());
 
 
             base.OnModelCreating(modelBuilder);

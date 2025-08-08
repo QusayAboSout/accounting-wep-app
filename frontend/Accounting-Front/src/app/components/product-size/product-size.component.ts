@@ -1,8 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ProductSizeService } from '../../../services';
-import { ProductSizeDto } from '../../../models';
+import { ProductSizeService } from '../../services';
+import { ProductSizeDto } from '../../models';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -12,44 +12,57 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
-  selector: 'app-product-size-list',
+  selector: 'app-product-size',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterModule, 
-    TableModule, 
-    ButtonModule, 
-    CardModule, 
-    ToolbarModule, 
-    MessageModule, 
+    CommonModule,
+    RouterModule,
+    TableModule,
+    ButtonModule,
+    CardModule,
+    ToolbarModule,
+    MessageModule,
     ProgressSpinnerModule,
     ConfirmDialogModule,
-    ToastModule
+    ToastModule,
+    ReactiveFormsModule,
+    DialogModule,
   ],
   providers: [ConfirmationService, MessageService],
-  templateUrl: './product-size-list.component.html'
+  templateUrl: './product-size.component.html'
 })
-export class ProductSizeListComponent implements OnInit {
+export class ProductSizeComponent implements OnInit {
   productSizes = signal<ProductSizeDto[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
+  isEditMode = signal(false);
+  selectedSize: ProductSizeDto | null = null;
+  visible: boolean = false;
+  form!: FormGroup;
 
   constructor(
     private productSizeService: ProductSizeService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    private fb: FormBuilder
+  ) { }
 
   ngOnInit(): void {
     this.loadProductSizes();
+
+    this.form = this.fb.group({
+      name: ['', Validators.required],
+    });
   }
 
   loadProductSizes(): void {
     this.loading.set(true);
     this.error.set(null);
-    
+
     this.productSizeService.getAll().subscribe({
       next: (productSizes) => {
         this.productSizes.set(productSizes);
@@ -96,5 +109,48 @@ export class ProductSizeListComponent implements OnInit {
         });
       }
     });
+  }
+  addProductSize(): void {
+    this.visible = true;
+    this.isEditMode.set(false);
+    this.selectedSize = null;
+    this.form.reset();
+  }
+
+  get nameControl() {
+    return this.form.get('name');
+  }
+
+  editProductSize(size: ProductSizeDto): void {
+    this.visible = true;
+    this.isEditMode.set(true);
+    this.selectedSize = size;
+    this.form.patchValue({
+      id: size.id,
+      name: size.name
+    });
+  }
+
+  closeDialog(): void {
+    this.visible = false;
+    this.form.reset();
+  }
+
+  onSubmit() {
+    if (this.form.invalid) return;
+
+    const formValue = this.form.value;
+    if (this.isEditMode()) {
+      formValue.id = this.selectedSize?.id;
+      this.productSizeService.update(formValue).subscribe(() => {
+        this.closeDialog();
+        this.loadProductSizes();
+      });
+    } else {
+      this.productSizeService.add(formValue).subscribe(() => {
+        this.closeDialog();
+        this.loadProductSizes();
+      });
+    }
   }
 }

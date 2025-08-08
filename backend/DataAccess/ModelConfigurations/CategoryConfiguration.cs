@@ -10,20 +10,20 @@ using System.Threading.Tasks;
 
 namespace DataAccess.ModelConfigurations
 {
-    public class CategoryConfiguration
+    public class ProductCategoryConfiguration
     {
-        public CategoryConfiguration(EntityTypeBuilder<Category> entityTypeBuilder)
+        public ProductCategoryConfiguration(EntityTypeBuilder<ProductCategory> entityTypeBuilder)
         {
             entityTypeBuilder.HasData(CreateData());
         }
 
-        private List<Category> CreateData()
+        private List<ProductCategory> CreateData()
         {
-            return new List<Category>()
+            return new List<ProductCategory>()
             {
-                 new Category { ID = 1, Name = "Electronics" },
-            new Category { ID = 2, Name = "Clothing" },
-            new Category { ID = 3, Name = "Food" }
+                 new ProductCategory { ID = 1, Name = "إلكترونيات" },
+            new ProductCategory { ID = 2, Name = "ملابس" },
+            new ProductCategory { ID = 3, Name = "طعام" }
             };
         }
     }

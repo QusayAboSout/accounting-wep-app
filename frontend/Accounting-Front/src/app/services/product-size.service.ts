@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { ProductSize, ProductSizeDto } from '../models';
+import { ProductSizeDto } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +28,7 @@ export class ProductSizeService {
     return this.http.put<ProductSizeDto>(`${this.baseUrl}/ProductSize/UpdateProductSize`, item);
   }
 
-  delete(id: number): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.baseUrl}/ProductSize/DeleteProductSize/${id}`);
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/ProductSize/DeleteProductSize/${id}`);
   }
 }

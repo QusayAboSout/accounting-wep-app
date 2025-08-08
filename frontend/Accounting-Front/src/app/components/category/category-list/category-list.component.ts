@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CategoryService } from '../../../services';
-import { CategoryDto } from '../../../models';
+import { ProductCategoryDto } from '../../../models';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -12,44 +12,60 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-
+import { DialogModule } from 'primeng/dialog';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TagModule } from 'primeng/tag';
+import { FloatLabelModule } from 'primeng/floatlabel';
 @Component({
   selector: 'app-category-list',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterModule, 
-    TableModule, 
-    ButtonModule, 
-    CardModule, 
-    ToolbarModule, 
-    MessageModule, 
+    CommonModule,
+    RouterModule,
+    TableModule,
+    ButtonModule,
+    CardModule,
+    ToolbarModule,
+    MessageModule,
     ProgressSpinnerModule,
     ConfirmDialogModule,
-    ToastModule
+    ToastModule,
+    DialogModule,
+    ReactiveFormsModule,
+    TagModule,
+    FloatLabelModule,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './category-list.component.html'
 })
 export class CategoryListComponent implements OnInit {
-  categories = signal<CategoryDto[]>([]);
+  categories = signal<ProductCategoryDto[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
+  isEditMode = signal(false);
+  selectedCategory: ProductCategoryDto | null = null;
+  visible: boolean = false;
+  form!: FormGroup;
 
   constructor(
     private categoryService: CategoryService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    private fb: FormBuilder
+  ) { }
 
   ngOnInit(): void {
     this.loadCategories();
+
+    this.form = this.fb.group({
+      name: ['', Validators.required],
+    });
   }
 
   loadCategories(): void {
     this.loading.set(true);
     this.error.set(null);
-    
+
     this.categoryService.getAll().subscribe({
       next: (categories) => {
         this.categories.set(categories);
@@ -68,7 +84,7 @@ export class CategoryListComponent implements OnInit {
     });
   }
 
-  deleteCategory(category: CategoryDto): void {
+  deleteCategory(category: ProductCategoryDto): void {
     this.confirmationService.confirm({
       message: `هل أنت متأكد من حذف الفئة "${category.name}"؟`,
       header: 'تأكيد الحذف',
@@ -89,12 +105,56 @@ export class CategoryListComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: 'خطأ',
-              detail: 'فشل في حذف الفئة'
+              detail: err.error || 'فشل في حذف الفئة'
             });
-            console.error('Error deleting category:', err);
           }
         });
       }
     });
   }
+
+  get nameControl() {
+    return this.form.get('name');
+  }
+
+  editCategory(category: ProductCategoryDto): void {
+    this.visible = true;
+    this.isEditMode.set(true);
+    this.selectedCategory = category;
+    this.form.patchValue({
+      id: category.id,
+      name: category.name
+    });
+  }
+
+  closeDialog(): void {
+    this.visible = false;
+    this.form.reset();
+  }
+
+  addCategory(): void {
+    this.visible = true;
+    this.isEditMode.set(false);
+    this.selectedCategory = null;
+    this.form.reset();
+  }
+
+  onSubmit() {
+    if (this.form.invalid) return;
+
+    const formValue = this.form.value;
+    if (this.isEditMode()) {
+      formValue.id = this.selectedCategory?.id;
+      this.categoryService.update(formValue).subscribe(() => {
+        this.closeDialog();
+        this.loadCategories();
+      });
+    } else {
+      this.categoryService.add(formValue).subscribe(() => {
+        this.closeDialog();
+        this.loadCategories();
+      });
+    }
+  }
+
 }

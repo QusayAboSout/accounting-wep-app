@@ -17,25 +17,25 @@ namespace WebApi.Controller
         }
 
         [HttpGet("GetCategorys")]
-        public async Task<List<CategoryDto>> GetCategorys()
+        public async Task<List<ProductCategoryDto>> GetCategorys()
         {
-            return await _services.GetAll<CategoryDto>();
+            return await _services.GetAll<ProductCategoryDto>();
         }
 
         [HttpPost("AddCategory")]
-        public async Task<CategoryDto> AddCategory([FromBody] CategoryDto value)
+        public async Task<ProductCategoryDto> AddCategory([FromBody] ProductCategoryDto value)
         {
             return await _services.Add(value);
         }
         [HttpPut("UpdateCategory")]
-        public async Task<CategoryDto> UpdateCategory([FromBody] CategoryDto value)
+        public async Task<ProductCategoryDto> UpdateCategory([FromBody] ProductCategoryDto value)
         {
             return await _services.Update(value);
         }
         [HttpDelete("DeleteCategory/{id}")]
-        public async Task<bool> DeleteCategory(long id)
+        public async Task<IActionResult> DeleteCategory(long id)
         {
-            return await _services.Delete(id);
+            return await _services.DeleteCategory(id);
         }
     }
 }

@@ -1,10 +1,4 @@
-import { BaseModel } from './base.model';
-
-export interface Category extends BaseModel {
-  name: string;
-}
-
-export interface CategoryDto {
+export interface ProductCategoryDto {
   id?: number;
   name: string;
 }

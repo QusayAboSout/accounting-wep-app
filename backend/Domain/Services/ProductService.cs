@@ -22,6 +22,5 @@ namespace Domain.Services
             _ProductRepository = repository;
             _mapper = mapper;
         }
-
     }
 }

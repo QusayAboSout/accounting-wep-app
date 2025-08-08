@@ -10,8 +10,8 @@ namespace Domain.Models
         public string Barcode { get; set; }
 
 
-        public long CategoryID { get; set; }
-        public Category Category { get; set; }
+        public long ProductCategoryID { get; set; }
+        public ProductCategory ProductCategory { get; set; }
         public long ProductColorID { get; set; }
         public ProductColor ProductColor { get; set; }
         public long ProductSizeID { get; set; }

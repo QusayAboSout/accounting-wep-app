@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ProductService, CategoryService, ProductColorService, ProductSizeService } from '../../../services';
-import { ProductDto, CategoryDto, ProductColorDto, ProductSizeDto } from '../../../models';
+import { ProductDto, ProductCategoryDto, ProductColorDto, ProductSizeDto } from '../../../models';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -41,23 +41,26 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 })
 export class ProductListComponent implements OnInit {
   products = signal<ProductDto[]>([]);
-  categories = signal<CategoryDto[]>([]);
+  categories = signal<ProductCategoryDto[]>([]);
   productColors = signal<ProductColorDto[]>([]);
   productSizes = signal<ProductSizeDto[]>([]);
+
+  categoryMap = new Map<number, string>();
+  colorMap = new Map<number, string>();
+  sizeMap = new Map<number, string>();
+
   dialogVisible = signal<boolean>(false);
   loading = signal(false);
   error = signal<string | null>(null);
   visible: boolean = false;
   form!: FormGroup;
   product: ProductDto = {} as ProductDto;
+  isEditMode = signal(false);
+  selectedProduct: ProductDto | null = null;
 
   loadingCategory = false;
   loadingColor = false;
   loadingSize = false;
-
-  // categories: CategoryDto[] = [];
-  // colors: ProductColorDto[] = [];
-  // sizes: ProductSizeDto[] = [];
 
   constructor(
     private productService: ProductService,
@@ -70,21 +73,21 @@ export class ProductListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadData();
+    this.loadProducts();
 
     this.form = this.fb.group({
       name: ['', Validators.required],
       cost: [0, Validators.required],
       costPrice: [0, Validators.required],
-      barcode: [''],
-      categoryID: [null, Validators.required],
+      barcode: ['', Validators.required],
+      productCategoryID: [null, Validators.required],
       productColorID: [null, Validators.required],
       productSizeID: [null, Validators.required]
     });
 
   }
 
-  loadData(): void {
+  loadProducts(): void {
     this.loading.set(true);
     this.error.set(null);
 
@@ -99,6 +102,22 @@ export class ProductListComponent implements OnInit {
         this.categories.set(data.categories);
         this.productColors.set(data.productColors);
         this.productSizes.set(data.productSizes);
+
+        this.categoryMap = new Map(
+          data.categories
+            .filter(c => c.id !== undefined && c.id !== null)
+            .map(c => [c.id!, c.name])
+        );
+        this.colorMap = new Map(
+          data.productColors
+            .filter(c => c.id !== undefined && c.id !== null)
+            .map(c => [c.id!, c.name])
+        );
+        this.sizeMap = new Map(
+          data.productSizes
+            .filter(s => s.id !== undefined && s.id !== null)
+            .map(s => [s.id!, s.name])
+        );
         this.loading.set(false);
       },
       error: (err) => {
@@ -114,10 +133,9 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-  getCategoryName(categoryId: number): string {
-    // const category = this.categories().find(c => c.id === categoryId);
-    // return category?.name || 'غير محدد';
-    return "غير محدد";
+  getCategoryName(productCategoryID: number): string {
+    const category = this.categories().find(c => c.id === productCategoryID);
+    return category?.name || 'غير محدد';
   }
 
   getColorName(colorId: number): string {
@@ -195,7 +213,7 @@ export class ProductListComponent implements OnInit {
       accept: () => {
         this.productService.delete(product.id!).subscribe({
           next: () => {
-            this.loadData();
+            this.loadProducts();
             this.messageService.add({
               severity: 'success',
               summary: 'تم بنجاح',
@@ -214,6 +232,21 @@ export class ProductListComponent implements OnInit {
       }
     });
   }
+  editProduct(product: ProductDto): void {
+    this.visible = true;
+    this.isEditMode.set(true);
+    this.selectedProduct = product;
+    this.form.patchValue({
+      id: product.id,
+      name: product.name,
+      cost: product.cost,
+      costPrice: product.costPrice,
+      barcode: product.barcode,
+      productCategoryID: product.productCategoryID,
+      productColorID: product.productColorID,
+      productSizeID: product.productSizeID
+    });
+  }
   showDialog(): void {
     this.visible = true;
     this.form.reset();
@@ -223,12 +256,19 @@ export class ProductListComponent implements OnInit {
     this.form.reset();
   }
   onSubmit() {
-    if (this.form.valid) {
-      const product: ProductDto = this.form.value;
-      console.log('Submit product:', product);
-      // Call API to save product
+    if (this.form.invalid) return;
+    const formValue = this.form.value;
+    if (this.isEditMode()) {
+      this.form.value.id = this.selectedProduct?.id;
+      this.productService.update(formValue).subscribe(() => {
+        this.closeDialog();
+        this.loadProducts();
+      });
     } else {
-      this.form.markAllAsTouched();
+      this.productService.add(formValue).subscribe(() => {
+        this.closeDialog();
+        this.loadProducts();
+      });
     }
   }
 }

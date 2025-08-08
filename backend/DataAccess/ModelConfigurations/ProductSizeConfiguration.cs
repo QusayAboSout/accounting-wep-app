@@ -21,9 +21,9 @@ namespace DataAccess.ModelConfigurations
         {
             return new List<ProductSize>()
             {
-               new ProductSize { ID = 1, Name = "Small" },
-            new ProductSize { ID = 2, Name = "Medium" },
-            new ProductSize { ID = 3, Name = "Large" }
+               new ProductSize { ID = 1, Name = "صغير" },
+            new ProductSize { ID = 2, Name = "متوسط" },
+            new ProductSize { ID = 3, Name = "كبير" }
             };
         }
     }

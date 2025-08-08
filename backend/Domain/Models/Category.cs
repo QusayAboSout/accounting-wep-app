@@ -2,7 +2,7 @@
 
 namespace Domain.Models
 {
-    public class Category : BaseEntity
+    public class ProductCategory : BaseEntity
     {
         public string Name { get; set; }
     }

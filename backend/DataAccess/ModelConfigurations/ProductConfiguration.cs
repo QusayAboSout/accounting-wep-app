@@ -14,20 +14,20 @@ namespace DataAccess.ModelConfigurations
     {
         public ProductConfiguration(EntityTypeBuilder<Product> entityTypeBuilder)
         {
-            entityTypeBuilder.HasOne(p => p.Category)
+            entityTypeBuilder.HasOne(p => p.ProductCategory)
                    .WithMany()
-                   .HasForeignKey(p => p.CategoryID)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .HasForeignKey(p => p.ProductCategoryID)
+                   .OnDelete(DeleteBehavior.Restrict);
 
             entityTypeBuilder.HasOne(p => p.ProductColor)
                    .WithMany()
                    .HasForeignKey(p => p.ProductColorID)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.Restrict);
 
             entityTypeBuilder.HasOne(p => p.ProductSize)
                    .WithMany()
                    .HasForeignKey(p => p.ProductSizeID)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.Restrict);
             entityTypeBuilder.HasData(CreateData());
         }
 
@@ -41,7 +41,7 @@ namespace DataAccess.ModelConfigurations
                 Name = "Smartphone",
                 Cost = 500,
                 CostPrice = 450,
-                CategoryID = 1,
+                ProductCategoryID = 1,
                 ProductColorID = 1,
                 ProductSizeID = 2,
                 Barcode = "1234567890123",
@@ -52,7 +52,7 @@ namespace DataAccess.ModelConfigurations
                 Name = "T-Shirt",
                 Cost = 30,
                 CostPrice = 20,
-                CategoryID = 2,
+                ProductCategoryID = 2,
                 ProductColorID = 2,
                 ProductSizeID = 1,
                 Barcode = "8881112333888",
@@ -64,7 +64,7 @@ namespace DataAccess.ModelConfigurations
                 Name = "Chocolate Box",
                 Cost = 15,
                 CostPrice = 10,
-                CategoryID = 3,
+                ProductCategoryID = 3,
                 ProductColorID = 3,
                 ProductSizeID = 3,
                 Barcode = "3333333334443",

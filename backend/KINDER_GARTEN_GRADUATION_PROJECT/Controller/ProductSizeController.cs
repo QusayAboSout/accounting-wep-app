@@ -33,9 +33,9 @@ namespace WebApi.Controller
             return await _services.Update(value);
         }
         [HttpDelete("DeleteProductSize/{id}")]
-        public async Task<bool> DeleteProductSize(long id)
+        public async Task<IActionResult> DeleteProductSize(long id)
         {
-            return await _services.Delete(id);
+            return await _services.DeleteSize(id);
         }
     }
 }

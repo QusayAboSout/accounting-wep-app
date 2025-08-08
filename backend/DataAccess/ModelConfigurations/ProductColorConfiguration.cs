@@ -21,9 +21,9 @@ namespace DataAccess.ModelConfigurations
         {
             return new List<ProductColor>()
             {
-               new ProductColor { ID = 1, Name = "Red" },
-            new ProductColor { ID = 2, Name = "Blue" },
-            new ProductColor { ID = 3, Name = "Green" }
+               new ProductColor { ID = 1, Name = "أحمر" },
+            new ProductColor { ID = 2, Name = "أزرق" },
+            new ProductColor { ID = 3, Name = "أخضر" }
             };
         }
     }

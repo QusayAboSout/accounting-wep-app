@@ -7,7 +7,7 @@ namespace WebApi.ServicesConfigurations
     {
         public static IServiceCollection TanvirArjelConfiguration(this IServiceCollection services, IConfiguration Configuration)
         {
-            services.AddServicesOfAllTypes(new string[]{ "Domain", "DataAccess" });
+            services.AddServicesOfAllTypes(new string[] { "Domain", "DataAccess" });
             return services;
         }
         public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration Configuration)

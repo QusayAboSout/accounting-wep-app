@@ -36,6 +36,11 @@ export class App {
       label: 'المنتجات',
       icon: 'pi pi-box',
       routerLink: '/products'
+    },
+    {
+      label: 'المدفوعات',
+      icon: 'pi pi-dollar',
+      routerLink: '/payments'
     }
   ];
 }

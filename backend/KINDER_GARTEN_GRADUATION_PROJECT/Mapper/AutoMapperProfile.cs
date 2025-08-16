@@ -4,7 +4,7 @@ using Domain.DTOs;
 using WebApi.DTOs;
 using System.Runtime.CompilerServices;
 using Domain.DTOs.User;
-using Domain.Models.UserVerificationCodeModel;
+using Org.BouncyCastle.Crypto.Agreement.JPake;
 
 namespace WebApi.Mapper
 {
@@ -19,6 +19,7 @@ namespace WebApi.Mapper
                 cfg.CreateMap<ProductCategory, ProductCategoryDto>().ReverseMap();
                 cfg.CreateMap<ProductColor, ProductColorDto>().ReverseMap();
                 cfg.CreateMap<ProductSize, ProductSizeDto>().ReverseMap();
+                cfg.CreateMap<Payments, PaymentsDto>().ReverseMap();
 
             });
             var mapper = config.CreateMapper();

@@ -4,6 +4,7 @@ import { CategoryListComponent } from './components/category/category-list/categ
 import { ProductSizeComponent } from './components/product-size/product-size.component';
 import { ProductListComponent } from './components/product/product-list/product-list.component';
 import { ProductColorComponent } from './components/product-color/product-color.component';
+import { PaymentsComponent } from './components/payments/payments';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -20,6 +21,7 @@ export const routes: Routes = [
 
   // Product routes
   { path: 'products', component: ProductListComponent },
+  { path: 'payments', component: PaymentsComponent },
 
   { path: '**', redirectTo: '/dashboard' }
 ];
